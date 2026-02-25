@@ -415,7 +415,9 @@ pid_t setsid(void)
 
 int dup(int __fildes)
 {
-    return 0;
+    // ESP32 stub: fd duplication not implemented
+    errno = ENOSYS;
+    return -1;
 }
 
 mode_t umask(mode_t __mask)
