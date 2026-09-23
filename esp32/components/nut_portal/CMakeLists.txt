@@ -3,6 +3,7 @@ idf_component_register(
         dns_server.c
         nut_wifi_conf.c
         nut_wifi.c
+        nut_eth.c
         nut_portal.c
     INCLUDE_DIRS
         include
@@ -15,4 +16,7 @@ idf_component_register(
         esp_event
         nvs_flash
         lwip
+        esp_eth
+        esp_driver_spi
+        espressif__w5500
 )

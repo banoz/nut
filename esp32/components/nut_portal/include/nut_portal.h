@@ -27,3 +27,6 @@ bool nut_wifi_ap_is_up(void);
 
 /* HTTP page on port 80. DNS and DHCP option 114 run only while the softAP is up. */
 esp_err_t nut_portal_start(void);
+
+/* Waveshare ESP32-S3-ETH W5500. DHCP on the RJ45. Failure leaves Wi-Fi running. */
+esp_err_t nut_eth_start(void);

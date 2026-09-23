@@ -139,6 +139,9 @@ void app_main(void)
     nut_wifi_config_t wifi_cfg;
     ESP_ERROR_CHECK(nut_wifi_conf_load(&wifi_cfg));
     ESP_ERROR_CHECK(nut_wifi_start(&wifi_cfg));
+    if (nut_eth_start() != ESP_OK) {
+        ESP_LOGW(TAG, "Ethernet unavailable, continuing on Wi-Fi");
+    }
     ESP_ERROR_CHECK(nut_portal_start());
 
     hidHostInstall();
