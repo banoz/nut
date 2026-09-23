@@ -1276,7 +1276,15 @@ static void update_sysmaxconn(void)
 
 	/* default to system limit (may be overridden in upsd.conf) */
 	/* FIXME: Check for overflows (and int size of nfds_t vs. long) - see get_max_pid_t() for example */
+#ifdef ESP_PLATFORM
+	/* sysconf(_SC_OPEN_MAX) is tiny on picolibc. upsd refuses to start
+	 * unless this is at least RESERVE_FD_COUNT_UPSD+10 (~18). Give it a
+	 * value that satisfies that check; actual sockets are still capped
+	 * by MAXCONN in upsd.conf and CONFIG_LWIP_MAX_SOCKETS. */
+	l = RESERVE_FD_COUNT_UPSD + 16;
+#else
 	l = sysconf(_SC_OPEN_MAX);
+#endif
 
 # ifdef HAVE_SYS_RESOURCE_H
 	/* Try to use getrlimit/setrlimit to detect and possibly increase the limit */
@@ -2820,14 +2828,20 @@ int main(int argc, char **argv)
 	become_user(new_uid);
 #ifndef WIN32
 	if (chdir(statepath)) {
+#ifdef ESP_PLATFORM
+		upslog_with_errno(LOG_WARNING, "Can't chdir to %s (ESP32 VFS, continuing)", statepath);
+#else
 		fatal_with_errno(EXIT_FAILURE, "Can't chdir to %s", statepath);
+#endif
 	} else {
 		upsdebugx(1, "chdired into statepath %s for driver sockets", statepath);
 	}
 #endif	/* !WIN32 */
 
 	/* check statepath perms */
+#ifndef ESP_PLATFORM
 	check_perms(statepath);
+#endif
 
 	/* handle ups.conf */
 	read_upsconf(1);	/* 1 = may abort upon fundamental errors */
@@ -2871,6 +2885,9 @@ int main(int argc, char **argv)
 	while (!exit_flag) {
 		/* Note: mainloop() calls upsnotify(NOTIFY_STATE_WATCHDOG, NULL); */
 		mainloop();
+#ifdef ESP_PLATFORM
+		rtos_yield();
+#endif
 	}
 
 	upslogx(LOG_INFO, "Signal %d: exiting", exit_flag);
