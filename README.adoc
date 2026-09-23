@@ -328,6 +328,16 @@ included example configuration files, and auxiliary documentation for the
 parts that you intend to use.
 
 
+ESP32 Platform Support
+----------------------
+
+Experimental ESP32-S3 firmware is in `esp32/`, built with ESP-IDF 6.x
+(`idf.py`). It runs `usbhid-ups` and `upsd` as FreeRTOS tasks and serves
+the NUT protocol over Wi-Fi.
+
+See `esp32/README.md` and `esp32/ESP32_SECURITY.md`.
+
+
 Network Information
 -------------------
 
