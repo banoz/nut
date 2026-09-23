@@ -37,8 +37,13 @@ NUT patches are small and guarded with `ESP_PLATFORM` / `WITH_ESPUSB` /
 
 ## Hardware
 
-ESP32-S3 with USB-OTG (DevKitC-1 or equivalent) and a USB HID UPS
+ESP32-S3 with USB-OTG (DevKitC-1, AtomS3, or equivalent) and a USB HID UPS
 (APC HID was the original test target).
+
+Waveshare ESP32-S3-ETH also brings up the onboard W5500. `upsd` listens
+on every interface, so a client on the RJ45 reaches port 3493 after DHCP.
+The softAP still starts from `wifi.conf`. The image is built for 8 MB
+and fits in the low half of that board's 16 MB flash.
 
 ## Build
 
@@ -60,7 +65,7 @@ Flash layout is `partitions.csv` (8 MB, two FATFS volumes: `/var` and
 
 - SoftAP SSID `nut` / password `espdonut`, from `/usr/local/etc/nut/wifi.conf`
 - Captive portal on that AP (http://192.168.4.1/) edits `wifi.conf` and reboots
-- NUT server on UDP/TCP port 3493
+- NUT server on UDP/TCP port 3493, on Wi-Fi and on Ethernet when the W5500 links
 - Config in `/usr/local/etc/nut/` (seeded if missing)
 - Default users: `nut` / `espdonut` and `monuser` / `pass`
 
