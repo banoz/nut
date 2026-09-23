@@ -58,7 +58,8 @@ Flash layout is `partitions.csv` (8 MB, two FATFS volumes: `/var` and
 
 ## Runtime
 
-- SoftAP SSID `nut` / password `espdonut` (change in `main/wifi.c`)
+- SoftAP SSID `nut` / password `espdonut`, from `/usr/local/etc/nut/wifi.conf`
+- Captive portal on that AP (http://192.168.4.1/) edits `wifi.conf` and reboots
 - NUT server on UDP/TCP port 3493
 - Config in `/usr/local/etc/nut/` (seeded if missing)
 - Default users: `nut` / `espdonut` and `monuser` / `pass`

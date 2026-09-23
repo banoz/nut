@@ -23,14 +23,14 @@ The ESP32 port of NUT includes several hardcoded default credentials that **MUST
   3. Restrict access to configuration files
 
 #### WiFi Credentials
-- **Location**: `esp32/main/wifi.c` (compile-time)
+- **Location**: `/usr/local/etc/nut/wifi.conf` (also seeded from `esp32/fatfs/usr/local/etc/nut/wifi.conf`)
 - **Default credentials**:
   - SSID: `nut`
   - Password: `espdonut`
+- **Change them** from the captive portal at `http://192.168.4.1/` while joined to that AP, or by replacing the `usr` FAT image
 - **Actions Required**:
-  1. Modify `EXAMPLE_ESP_WIFI_SSID` and `EXAMPLE_ESP_WIFI_PASS` before compilation
-  2. Use WPA3 authentication when available
-  3. Consider implementing WiFi provisioning (BLE, WPS, or web interface)
+  1. Change the SSID and passphrase before this device is used on a real network
+  2. Use a passphrase of at least 8 characters so the softAP stays WPA2-PSK
 
 ### 2. File Permissions
 
