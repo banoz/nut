@@ -49,7 +49,6 @@ idf_component_register(
     SRCS
         app_main.c
         usb.c
-        wifi.c
         espusb.c
         compat/stubs.c
         compat/syslog.c
@@ -63,6 +62,7 @@ idf_component_register(
         ${NUT_ROOT}/drivers
         ${NUT_ROOT}/server
     PRIV_REQUIRES
+        nut_portal
         nvs_flash
         esp_wifi
         esp_event

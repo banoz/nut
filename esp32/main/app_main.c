@@ -10,6 +10,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include "nut_portal.h"
+
 #include "esp_check.h"
 #include "esp_log.h"
 #include "esp_task_wdt.h"
@@ -23,13 +25,11 @@
 extern int main(int argc, char **argv);
 extern int drv_main(int argc, char **argv);
 extern void hidHostInstall(void);
-extern void wifi_init_sta(void);
-extern void wifi_init_softap(void);
 
 void mountFS(void)
 {
     const esp_vfs_fat_mount_config_t mount_config = {
-        .max_files = 4,
+        .max_files = 8,
         .format_if_mount_failed = true,
         .allocation_unit_size = CONFIG_WL_SECTOR_SIZE,
         .use_one_fat = false,
@@ -133,9 +133,14 @@ void app_main(void)
     };
     ESP_ERROR_CHECK(esp_task_wdt_reconfigure(&twdt_config));
 
-    wifi_init_softap();
     mountFS();
     seed_default_config();
+
+    nut_wifi_config_t wifi_cfg;
+    ESP_ERROR_CHECK(nut_wifi_conf_load(&wifi_cfg));
+    ESP_ERROR_CHECK(nut_wifi_start(&wifi_cfg));
+    ESP_ERROR_CHECK(nut_portal_start());
+
     hidHostInstall();
 
     ESP_LOGI(TAG, "starting usbhid-ups task");
