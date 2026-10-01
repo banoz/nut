@@ -49,12 +49,15 @@
 #endif	/* !SHUT_MODE => USB && WIN32 */
 
 /* include all known subdrivers */
+#if !defined(NUT_ESP32_MINIMAL)
 #include "mge-hid.h"
+#endif
 
 #if !((defined SHUT_MODE) && SHUT_MODE)
 	/* explore stub goes first, others alphabetically */
 #	include "explore-hid.h"
 #	include "apc-hid.h"
+#if !defined(NUT_ESP32_MINIMAL)
 #	include "arduino-hid.h"
 #	include "belkin-hid.h"
 #	include "cps-hid.h"
@@ -69,6 +72,7 @@
 #	include "powervar-hid.h"
 #	include "salicru-hid.h"
 #	include "tripplite-hid.h"
+#endif	/* !NUT_ESP32_MINIMAL */
 #endif	/* !SHUT_MODE => USB */
 
 /* Reference list of available subdrivers */
@@ -76,10 +80,13 @@ static subdriver_t *subdriver_list[] = {
 #if !((defined SHUT_MODE) && SHUT_MODE)
 	&explore_subdriver,
 #endif	/* !SHUT_MODE => USB */
+#if !defined(NUT_ESP32_MINIMAL)
 	/* mge-hid.c supports both SHUT and USB */
 	&mge_subdriver,
+#endif
 #if !((defined SHUT_MODE) && SHUT_MODE)
 	&apc_subdriver,
+#if !defined(NUT_ESP32_MINIMAL)
 	&arduino_subdriver,
 	&belkin_subdriver,
 	&cps_subdriver,
@@ -94,6 +101,7 @@ static subdriver_t *subdriver_list[] = {
 	&powervar_subdriver,
 	&salicru_subdriver,
 	&tripplite_subdriver,
+#endif	/* !NUT_ESP32_MINIMAL */
 #endif	/* !SHUT_MODE => USB */
 	NULL
 };
@@ -1619,7 +1627,7 @@ void upsdrv_initinfo(void)
 		val = getval(HU_VAR_ONDELAY);
 		if (val) {
 			long	l = strtol(val, NULL, 10);
-#if !((defined SHUT_MODE) && SHUT_MODE)
+#if !((defined SHUT_MODE) && SHUT_MODE) && !defined(NUT_ESP32_MINIMAL)
 			if (subdriver == &cps_subdriver
 			 && (l < 60 || l % 60)
 			) {
@@ -1635,7 +1643,7 @@ void upsdrv_initinfo(void)
 		val = getval(HU_VAR_OFFDELAY);
 		if (val) {
 			long	l = strtol(val, NULL, 10);
-#if !((defined SHUT_MODE) && SHUT_MODE)
+#if !((defined SHUT_MODE) && SHUT_MODE) && !defined(NUT_ESP32_MINIMAL)
 			if (subdriver == &cps_subdriver
 			 && (l > 0 && (l < 60 || l % 60))
 			) {
@@ -1671,7 +1679,7 @@ void upsdrv_initinfo(void)
 	val = getval(HU_VAR_POLLFREQ);
 	if (val) {
 		pollfreq = atoi(val);
-#if !((defined SHUT_MODE) && SHUT_MODE)
+#if !((defined SHUT_MODE) && SHUT_MODE) && !defined(NUT_ESP32_MINIMAL)
 	} else {
 		/* note, there is also 'pollinterval'/poll_interval (C var)
 		 * common delay between main.c loops */
@@ -1688,7 +1696,7 @@ void upsdrv_initinfo(void)
 	/* ignore (broken) interrupt pipe */
 	if (testvar("pollonly")) {
 		use_interrupt_pipe = FALSE;
-#if !((defined SHUT_MODE) && SHUT_MODE)
+#if !((defined SHUT_MODE) && SHUT_MODE) && !defined(NUT_ESP32_MINIMAL)
 	} else {
 		if (subdriver == &cps_subdriver) {
 			upslogx(LOG_WARNING, "You may want to set 'pollonly' "

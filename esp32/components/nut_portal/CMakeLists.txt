@@ -1,0 +1,18 @@
+idf_component_register(
+    SRCS
+        dns_server.c
+        nut_wifi_conf.c
+        nut_wifi.c
+        nut_portal.c
+    INCLUDE_DIRS
+        include
+    PRIV_INCLUDE_DIRS
+        .
+    PRIV_REQUIRES
+        esp_http_server
+        esp_wifi
+        esp_netif
+        esp_event
+        nvs_flash
+        lwip
+)

@@ -81,7 +81,35 @@
 
 #include <regex.h>
 
-#if (!WITH_LIBUSB_1_0) && (!WITH_LIBUSB_0_1)
+#if defined(WITH_ESPUSB) && WITH_ESPUSB
+#include "espusb.h"
+
+typedef espusb_device_handle usb_dev_handle;
+
+#ifndef USB_DT_STRING
+#define USB_DT_STRING LIBUSB_DT_STRING
+#endif
+
+static inline int usb_get_string(usb_dev_handle *dev, int index, int langid,
+		usb_ctrl_charbuf buf, size_t buflen)
+{
+	if (index < 0 || (uintmax_t)index > UINT8_MAX
+	||  langid < 0 || (uintmax_t)langid > UINT16_MAX
+	||  (uintmax_t)buflen > INT_MAX
+	) {
+		fatalx(EXIT_FAILURE,
+			"usb_get_string() args out of range for espusb_get_string_descriptor() implementation");
+	}
+
+	return espusb_get_string_descriptor(
+		dev,
+		(uint8_t)index,
+		(uint16_t)langid,
+		(unsigned char *)buf,
+		(int)buflen);
+}
+
+#elif (!WITH_LIBUSB_1_0) && (!WITH_LIBUSB_0_1)
 #error "configure script error: Neither WITH_LIBUSB_1_0 nor WITH_LIBUSB_0_1 is set"
 #endif
 

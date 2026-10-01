@@ -2727,7 +2727,17 @@ int main(int argc, char **argv)
 	 * or dump data).  This check avoids aborting in case where
 	 * i.e. /var is unmounted already during shut down.
 	 */
+#ifdef ESP_PLATFORM
 	i = chdir(dflt_statepath());
+	if (i < 0) {
+		upslog_with_errno(LOG_WARNING,
+			"Can't chdir to %s (ESP32 VFS, continuing)",
+			dflt_statepath());
+		i = 0;
+	}
+#else
+	i = chdir(dflt_statepath());
+#endif
 	if (do_forceshutdown || dump_data) {
 		if (i < 0)
 			upslog_with_errno(LOG_WARNING,
@@ -3524,6 +3534,9 @@ sockname_ownership_finished:
 		}
 
 		handle_reload_flag();
+#ifdef ESP_PLATFORM
+		rtos_yield();
+#endif
 	}
 
 	/* if we get here, the exit flag was set by a signal handler */
